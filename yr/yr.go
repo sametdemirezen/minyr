@@ -20,15 +20,21 @@ func CelsiusToFahrenheitString(celsius string) (string, error) {
 }
 
 func CelsiusToFahrenheitLine(line string) (string, error) {
-	elementsInLine := strings.Split(line, ";")
+	elements := strings.Split(line, ";")
 	var err error
-	if len(elementsInLine) == 4 {
-		elementsInLine[3], err = CelsiusToFahrenheitString(elementsInLine[3])
-		if err != nil {
-			return "", err
+	if len(elements) == 4 {
+		if strings.HasSuffix(elements[3], "tur") {
+			return line, nil
+		} else if strings.HasPrefix(elements[0], "Data") {
+			return "Data er basert på gyldig data (per 18.03.2023) (CC BY 4.0) fra Meteorologisk institutt (MET);endringen er gjort av Samet Demirezen", nil
+		} else {
+			elements[3], err = CelsiusToFahrenheitString(elements[3])
+			if err != nil {
+				return "", err
+			}
 		}
 	} else {
 		return "", errors.New("linje har ikke forventet format")
 	}
-	return strings.Join(elementsInLine, ";"), nil
+	return strings.Join(elements, ";"), nil
 }
