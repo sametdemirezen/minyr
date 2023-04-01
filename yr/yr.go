@@ -1,8 +1,10 @@
 package yr
 
 import (
+	"bufio"
 	"errors"
 	"fmt"
+	"os"
 	"strconv"
 	"strings"
 
@@ -37,4 +39,23 @@ func CelsiusToFahrenheitLine(line string) (string, error) {
 		return "", errors.New("linje har ikke forventet format")
 	}
 	return strings.Join(elements, ";"), nil
+}
+
+func AverageTempratureCelsius() float64 {
+	source, _ := os.Open("kjevik-temp-celsius-20220318-20230318.csv")
+	defer source.Close()
+	var totalTemp float64
+	var totalLines float64
+	lineScanner := bufio.NewScanner(source)
+	for lineScanner.Scan() {
+		line := lineScanner.Text()
+		elements := strings.Split(line, ";")
+		temp, err := strconv.ParseFloat(elements[3], 64)
+		if err != nil {
+			continue
+		}
+		totalTemp += temp
+		totalLines++
+	}
+	return totalTemp / totalLines
 }

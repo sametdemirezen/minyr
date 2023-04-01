@@ -4,13 +4,14 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	"log"
 	"os"
 
+	"github.com/sametdemirezen/funtemps/conv"
 	"github.com/sametdemirezen/minyr/yr"
 )
 
 var newFile *os.File
-var err error
 
 func main() {
 	var input string
@@ -34,17 +35,17 @@ func main() {
 				if input == "j" {
 					os.Remove("kjevik-temp- fahr-20220318-20230318.csv")
 					fmt.Println("File is created!")
-
 				} else if input == "n" {
 					os.Exit(0)
 				}
 			}
 			newFile, _ = os.Create("kjevik-temp- fahr-20220318-20230318.csv")
-
-			source, _ := os.Open("kjevik-temp-celsius-20220318-20230318.csv")
+			source, err := os.Open("kjevik-temp-celsius-20220318-20230318.csv")
+			if err != nil {
+				log.Fatal(err)
+			}
 			defer source.Close()
 			defer newFile.Close()
-			checkNilError(err)
 
 			lineScanner := bufio.NewScanner(source)
 			for lineScanner.Scan() {
@@ -52,33 +53,28 @@ func main() {
 				line, _ := yr.CelsiusToFahrenheitLine(lines)
 				newFile.WriteString(line)
 				fmt.Fprintln(newFile, "")
-
-				/*line = strings.Split(lines, ";")
-				if strings.HasSuffix(line[3], "tur") {
-
-				} else {
-					celsius = line[3]
-					fahrenheit, _ = yr.CelsiusToFahrenheitString(celsius)
-					line[3] = fahrenheit
-
-				}*/
-
+			}
+		} else if input == "average" {
+			fmt.Println("Vennligst skriv for å se gjennomsnittstemperatur f eller c!")
+			scanner.Scan()
+			input = scanner.Text()
+			if input == "f" {
+				celsius := yr.AverageTempratureCelsius()
+				fahr := conv.CelsiusToFahrenheit(celsius)
+				fmt.Printf("Gjennomsnittstemperatur for hele perioden er "+"%.2f"+" fahrenheit.", fahr)
+				fmt.Println("")
+			} else if input == "c" {
+				fmt.Printf("Gjennomsnittstemperatur for hele perioden er "+"%.2f"+" celsius grader.", yr.AverageTempratureCelsius())
+				fmt.Println("")
 			}
 		} else {
 			fmt.Println("Venligst velg convert, average eller exit:")
 
 		}
 	}
-
 }
 
 func isFileExists(fileName string) bool {
 	_, err := os.Stat(fileName)
 	return !errors.Is(err, os.ErrNotExist)
-}
-
-func checkNilError(err error) {
-	if err != nil {
-		fmt.Println(err)
-	}
 }
