@@ -62,7 +62,7 @@ func AverageTempratureCelsius() float64 {
 }
 
 func TotalLines() int {
-	source, _ := os.Open("kjevik-temp-celsius-20220318-20230318.csv")
+	source, _ := os.Open("kjevik-temp- fahr-20220318-20230318.csv")
 	defer source.Close()
 	var totalLines int
 	lineScanner := bufio.NewScanner(source)
