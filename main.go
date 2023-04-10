@@ -16,17 +16,18 @@ var newFile *os.File
 func main() {
 	var input string
 	scanner := bufio.NewScanner(os.Stdin)
-	fmt.Println("Skriv convert for å forsette eller q for avsulette!")
 	fmt.Print(" >>")
 	for scanner.Scan() {
+		fmt.Println("Skriv convert eller average for å forsette, q for avsulette på programmet!")
 		fmt.Print(">> ")
 		input = scanner.Text()
 		if input == "q" || input == "exit" {
 			fmt.Println("exit")
 			os.Exit(0)
 		} else if input == "convert" {
+			fmt.Println("====================================================================")
 			fmt.Println("Konverterer alle målingene gitt i grader Celsius til grader Fahrenheit.")
-
+			fmt.Println("=======================================================================")
 			if isFileExists("kjevik-temp- fahr-20220318-20230318.csv") {
 				fmt.Println("Vil du generere filen på nytt!")
 				fmt.Print(">> ")
@@ -34,7 +35,7 @@ func main() {
 				input = scanner.Text()
 				if input == "j" {
 					os.Remove("kjevik-temp- fahr-20220318-20230318.csv")
-					fmt.Println("File is created!")
+					fmt.Println("Filen er opprettet på nytt!")
 				} else if input == "n" {
 					os.Exit(0)
 				}
@@ -50,7 +51,7 @@ func main() {
 			lineScanner := bufio.NewScanner(source)
 			for lineScanner.Scan() {
 				lines := lineScanner.Text()
-				line, _ := yr.CelsiusToFahrenheitLine(lines)
+				line, _ := yr.NewLines(lines)
 				newFile.WriteString(line)
 				fmt.Fprintln(newFile, "")
 			}
@@ -71,7 +72,9 @@ func main() {
 			fmt.Println("Venligst velg convert, average eller exit:")
 
 		}
+
 	}
+
 }
 
 func isFileExists(fileName string) bool {

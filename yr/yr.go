@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"errors"
 	"fmt"
+	"math"
 	"os"
 	"strconv"
 	"strings"
@@ -21,7 +22,7 @@ func CelsiusToFahrenheitString(celsius string) (string, error) {
 	return fahrString, err
 }
 
-func CelsiusToFahrenheitLine(line string) (string, error) {
+func NewLines(line string) (string, error) {
 	elements := strings.Split(line, ";")
 	var err error
 	if len(elements) == 4 {
@@ -57,5 +58,16 @@ func AverageTempratureCelsius() float64 {
 		totalTemp += temp
 		totalLines++
 	}
-	return totalTemp / totalLines
+	return math.Round((totalTemp/totalLines)*100) / 100
+}
+
+func TotalLines() int {
+	source, _ := os.Open("kjevik-temp-celsius-20220318-20230318.csv")
+	defer source.Close()
+	var totalLines int
+	lineScanner := bufio.NewScanner(source)
+	for lineScanner.Scan() {
+		totalLines++
+	}
+	return totalLines
 }
